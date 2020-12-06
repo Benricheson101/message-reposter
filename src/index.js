@@ -74,12 +74,38 @@ client.on('message', async (msg) => {
         break
       }
 
+      case 'listfollowed':
+      case 'listfollowing': {
+        if (!msg.member.permissions.has('MANAGE_WEBHOOKS')) {
+          msg.channel.send(':x: You do not have permission to use this command.')
+          return
+        }
+
+        const webhooks = await msg.channel.fetchWebhooks()
+        const mapped = webhooks
+          .filter(w => w.type === 'Channel Follower')
+          .map(w => `${w.id} | ${w.name}`)
+          .join('\n')
+
+        if (mapped) {
+          msg.channel.send(mapped, { code: true })
+        } else {
+          msg.channel.send(':x: There are no followed channels in this channel.')
+        }
+
+        // msg.channel.send(mapped.join('\n') || 'none', { code: true })
+
+        break
+      }
+
       case 'help': {
         msg.channel.send(
           '`ping`\n' +
             '> Get the bot\'s API latency (also useful for checking if the bot is dead)\n' +
           '`idof <m-id>`\n' +
             '> Get some information about a message. Note: this is the only way to get the id of a published message\n' +
+          '`listfollowing`\n' +
+            '> Get a list of followed channels and their webhook IDs' +
           '`help`\n' +
             '> Get a list of commands'
         )

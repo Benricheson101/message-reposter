@@ -1,5 +1,5 @@
-import {safeLoad} from 'js-yaml';
-import {readFileSync} from 'fs';
+const { readFileSync } = require('fs')
+const { safeLoad } = require('js-yaml')
 
 /**
  * parsed bot configuration
@@ -10,21 +10,27 @@ import {readFileSync} from 'fs';
  * parse yaml config and check that all required elements are present
  * @param {string} path - path to the config file
  * @param {string[]} required - required config elements
- * @return {Object} - parsed config
+ * @return {Object | undefined} - parsed config
  */
-export function parseConfig(
-    path,
-    required = ['token'],
+function parseConfig (
+  path,
+  required = ['token', 'proxy_channel', 'proxy']
 ) {
-  try {
-    const conf = readFileSync(path, {encoding: 'utf-8'});
+  const conf = readFileSync(path, { encoding: 'utf-8' })
+  const parsed = safeLoad(conf)
+  const missing = []
 
-    const parsed = safeLoad(conf);
-
-    console.log(parsed);
-  } catch (err) {
-    throw err;
+  for (const req of required) {
+    if (!(req in parsed)) {
+      missing.push(req)
+    }
   }
 
-  return {};
+  if (missing.length) {
+    throw new Error('Config has missing elements: ' + missing.join(', '))
+  }
+
+  return parsed
 }
+
+module.exports = { parseConfig }

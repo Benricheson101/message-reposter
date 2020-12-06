@@ -1,0 +1,16 @@
+# Discord bot token
+token: ''
+
+# Only listen for messages in this channel (channel id)
+proxy_channel: ''
+
+# Proxy info
+# you can add as many as you want, when the bot
+# reposts, it iterates over all relevant elements
+proxies:
+    # Message author (user id)
+  - user: ''
+    # Webhook to repost with
+    webhook:
+      id: ''
+      token: ''

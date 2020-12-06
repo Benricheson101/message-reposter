@@ -1,12 +1,18 @@
 const { readFileSync } = require('fs')
 const { safeLoad } = require('js-yaml')
-const { Client } = require('discord.js')
+const { Client, Intents } = require('discord.js')
 const fetch = require('node-fetch')
 
 const config = parseConfig('config.yml')
 
 const client = new Client({
-  disableMentions: 'all'
+  disableMentions: 'all',
+  messageCacheMaxSize: 25,
+  messageCacheLifetime: 600, // 10 minutes
+  messageSweepInterval: 300, // 5 minutes
+  ws: {
+    intents: new Intents(['GUILD_MESSAGES'])
+  }
 })
 
 client.on('ready', () => {

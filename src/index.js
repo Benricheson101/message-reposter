@@ -105,6 +105,14 @@ client.on('message', async (msg) => {
   }
 
   for (const h of found) {
+    if (!h?.webhook?.id || !h?.webhook?.token) {
+      console.log(
+        'Message from', msg.author.id, 'could not be reposted due to missing configuration elements.'
+      )
+
+      break
+    }
+
     const hook = `https://discord.com/api/webhooks/${h.webhook.id}/${h.webhook.token}?wait=1`
     await send(hook, body)
       .catch(console.error)

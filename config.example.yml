@@ -10,6 +10,8 @@ proxy_channel: ''
 proxies:
     # Message author (user id)
   - user: ''
+    # Roles to ping when a webhook reposts the message (optional)
+    roles: ['']
     # Webhook to repost with
     webhook:
       id: ''

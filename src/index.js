@@ -93,8 +93,6 @@ client.on('message', async (msg) => {
           msg.channel.send(':x: There are no followed channels in this channel.')
         }
 
-        // msg.channel.send(mapped.join('\n') || 'none', { code: true })
-
         break
       }
 
@@ -139,6 +137,13 @@ client.on('message', async (msg) => {
       break
     }
 
+    if (h?.roles?.length) {
+      console.log(h.roles)
+      const roles = h.roles.map((r) => `<@&${r}>`).join(' ')
+
+      body.content = `${body.content}\n${roles}`
+    }
+
     const hook = `https://discord.com/api/webhooks/${h.webhook.id}/${h.webhook.token}?wait=1`
     await send(hook, body)
       .catch(console.error)
@@ -181,9 +186,16 @@ function parseConfig (
  * @return {Promise<Object>}
  */
 async function send (webhook, body) {
+  const reqBody = {
+    allowed_mentions: {
+      parse: ['roles']
+    },
+    ...body
+  }
+
   return fetch(webhook, {
     method: 'post',
-    body: typeof body === 'string' ? body : JSON.stringify(body),
+    body: JSON.stringify(reqBody),
     headers: {
       'Content-Type': 'application/json'
     }
